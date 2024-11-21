@@ -53,7 +53,7 @@ export const POST = async (req: NextRequest) => {
   }
 };
 
-//reset code
+//reset email validation code
 export const PATCH = async (req: NextRequest) => {
   try {
     await connectToDatabase();
