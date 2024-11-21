@@ -42,8 +42,8 @@ function Login() {
   });
 
   return (
-    <form className="md:w-[20rem] w-full" onSubmit={handleSubmit}>
-      <div>
+    <main className="md:w-[20rem] w-full">
+      <form onSubmit={handleSubmit}>
         <h2 className="text-lg font-bold">_Log in</h2>
         <h3 className="text-gray-400 text-sm font-semibold ">
           Please enter your details
@@ -89,27 +89,27 @@ function Login() {
         >
           {isSubmitting ? <MoonLoader size={15} color="#fff" /> : "Log in"}
         </button>
-        <div className="relative flex justify-center">
-          <p className="bg-primary-1 px-1 absolute top-1/2 -translate-y-1/2 pb-1">
-            or
-          </p>
-          <div className="w-full bg-gray-400 h-0.5 my-4" />
-        </div>
-        <button
-          className="p-1 rounded-md w-full bg-gray-500 hover:bg-gray-700 flex items-center justify-center gap-2 text-sm"
-          onClick={() => signIn("google")}
-        >
-          <FaGoogle />
-          Log in with google
-        </button>
-        <div className="text-sm text-gray-300">
-          {"don't have an account?! "}
-          <Link href="/signup" className="text-white font-semibold underline">
-            Sign up
-          </Link>
-        </div>
+      </form>
+      <div className="relative flex justify-center">
+        <p className="bg-primary-1 px-1 absolute top-1/2 -translate-y-1/2 pb-1">
+          or
+        </p>
+        <div className="w-full bg-gray-400 h-0.5 my-4" />
       </div>
-    </form>
+      <button
+        className="p-1 rounded-md w-full bg-gray-500 hover:bg-gray-700 flex items-center justify-center gap-2 text-sm"
+        onClick={() => signIn("google", { callbackUrl: "/" })}
+      >
+        <FaGoogle />
+        Log in with google
+      </button>
+      <div className="text-sm text-gray-300">
+        {"don't have an account?! "}
+        <Link href="/signup" className="text-white font-semibold underline">
+          Sign up
+        </Link>
+      </div>
+    </main>
   );
 }
 

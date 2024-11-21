@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MoonLoader } from "react-spinners";
+import { signIn } from "next-auth/react";
 
 function Signup() {
   const { replace } = useRouter();
@@ -219,7 +220,10 @@ function Signup() {
         </p>
         <div className="w-full bg-gray-400 h-0.5 my-4" />
       </div>
-      <button className="p-1 rounded-md w-full bg-gray-500 flex items-center justify-center gap-2 text-sm">
+      <button
+        className="p-1 rounded-md w-full bg-gray-500 flex items-center justify-center gap-2 text-sm"
+        onClick={() => signIn("google", { callbackUrl: "/" })}
+      >
         <FaGoogle />
         Sign up with google
       </button>

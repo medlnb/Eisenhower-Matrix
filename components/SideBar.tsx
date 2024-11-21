@@ -77,6 +77,7 @@ function SideBar() {
             </Link>
           ))}
           <img
+            onClick={() => signOut()}
             src={
               session?.user?.image ??
               "https://dummyimage.com/100x100/000/fff&text=U"

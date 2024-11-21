@@ -62,6 +62,7 @@ export const options = {
             email: user.email,
             image: user.image ?? defaultImage,
             name: user.name,
+            verified: true,
           });
         }
         return true;
