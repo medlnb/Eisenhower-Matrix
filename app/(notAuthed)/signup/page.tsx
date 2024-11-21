@@ -5,6 +5,7 @@ import { LoginSchema } from "@Schemas/UerSchema";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { MoonLoader } from "react-spinners";
 
 function Signup() {
   const { replace } = useRouter();
@@ -16,31 +17,39 @@ function Signup() {
     errors?: string;
   }>({ code: "", isSubmitting: false, isSubmittingResend: false });
 
-  const { errors, getFieldProps, touched, handleSubmit, setErrors } = useFormik(
-    {
-      initialValues: {
-        email: "",
-        password: "",
-        name: "",
-      },
-      validationSchema: LoginSchema,
-      onSubmit: async (values) => {
-        const res = await fetch("/api/auth/register", {
-          method: "POST",
-          body: JSON.stringify(values),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          setErrors({ email: data.error });
-          return;
-        }
-
-        setValidation((prev) => ({ ...prev, userId: data.userId }));
-        if (data.msg) setErrors({ email: data.msg });
+  const {
+    errors,
+    getFieldProps,
+    touched,
+    handleSubmit,
+    setErrors,
+    isSubmitting,
+    setSubmitting,
+  } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      name: "",
+    },
+    validationSchema: LoginSchema,
+    onSubmit: async (values) => {
+      setSubmitting(true);
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSubmitting(false);
+        setErrors({ email: data.error });
         return;
-      },
-    }
-  );
+      }
+      setSubmitting(false);
+      setValidation((prev) => ({ ...prev, userId: data.userId }));
+      if (data.msg) setErrors({ email: data.msg });
+      return;
+    },
+  });
 
   const HandleValid = async () => {
     if (validation.code.length !== 6)
@@ -147,12 +156,10 @@ function Signup() {
         {!validation.userId && (
           <button
             type="submit"
-            disabled={validation.isSubmitting}
-            className={`bg-red-400 p-1 rounded-md w-full mt-2 text-sm ${
-              validation.isSubmitting ? "bg-gray-400" : "bg-secondary-2"
-            }`}
+            disabled={isSubmitting}
+            className="bg-secondary-2 p-1 flex justify-center items-center rounded-md w-full mt-2 text-sm"
           >
-            Sign up
+            {isSubmitting ? <MoonLoader size={15} color="#fff" /> : "Sign up"}
           </button>
         )}
       </form>
@@ -182,21 +189,25 @@ function Signup() {
           <div className="flex justify-between gap-2">
             <button
               disabled={validation.isSubmitting}
-              className={`p-1 rounded-md w-full mt-2 text-sm ${
-                validation.isSubmitting ? "bg-gray-400" : "bg-red-400"
-              }`}
+              className="p-1 flex justify-center rounded-md w-full mt-2 text-sm bg-secondary-2"
               onClick={HandleValid}
             >
-              Valid
+              {validation.isSubmitting ? (
+                <MoonLoader size={15} color="#fff" />
+              ) : (
+                "Valid"
+              )}
             </button>
             <button
               disabled={validation.isSubmittingResend}
-              className={`p-1 rounded-md w-full mt-2 text-sm ${
-                validation.isSubmittingResend ? "bg-gray-400" : "bg-gray-600"
-              }`}
+              className="p-1 flex justify-center rounded-md w-full mt-2 text-sm bg-gray-400"
               onClick={HandleResetCode}
             >
-              Resend
+              {validation.isSubmittingResend ? (
+                <MoonLoader size={15} color="#000" />
+              ) : (
+                "Resend"
+              )}
             </button>
           </div>
         </>

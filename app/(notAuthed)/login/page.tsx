@@ -5,6 +5,7 @@ import { LoginSchema } from "@Schemas/UerSchema";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { MoonLoader } from "react-spinners";
 
 function Login() {
   const { replace } = useRouter();
@@ -82,11 +83,11 @@ function Login() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`p-1 rounded-md w-full mt-2 text-sm ${
+          className={`p-1 flex items-center justify-center gap-2 rounded-md w-full mt-2 text-sm ${
             isSubmitting ? "bg-gray-400" : "bg-secondary-2"
           }`}
         >
-          Log in
+          {isSubmitting ? <MoonLoader size={15} color="#fff" /> : "Log in"}
         </button>
         <div className="relative flex justify-center">
           <p className="bg-primary-1 px-1 absolute top-1/2 -translate-y-1/2 pb-1">
@@ -94,7 +95,10 @@ function Login() {
           </p>
           <div className="w-full bg-gray-400 h-0.5 my-4" />
         </div>
-        <button className="p-1 rounded-md w-full bg-gray-500 flex items-center justify-center gap-2 text-sm">
+        <button
+          className="p-1 rounded-md w-full bg-gray-500 hover:bg-gray-700 flex items-center justify-center gap-2 text-sm"
+          onClick={() => signIn("google")}
+        >
           <FaGoogle />
           Log in with google
         </button>
