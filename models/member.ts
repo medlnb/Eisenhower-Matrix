@@ -5,6 +5,11 @@ const MemberSchema = new Schema({
     type: String,
     required: true,
   },
+  admin: {
+    type: String,
+    required: true,
+    default: false,
+  },
   email: {
     type: String,
     required: true,
@@ -20,34 +25,6 @@ const MemberSchema = new Schema({
   verified: {
     type: Boolean,
     default: false,
-  },
-  matrixTasks: {
-    type: [
-      {
-        content: {
-          type: String,
-        },
-        title: {
-          type: String,
-          required: true,
-        },
-        container: {
-          type: String,
-          required: true,
-          alt: [
-            "ImportUrgant",
-            "ImportNotUrgant",
-            "NotImportUrgant",
-            "NotImportNotUrgant",
-          ],
-        },
-      },
-    ],
-    default: [],
-  },
-  folders: {
-    type: [String],
-    default: [],
   },
 });
 

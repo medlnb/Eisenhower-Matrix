@@ -11,26 +11,21 @@ export const POST = async (req: NextRequest) => {
     const { email, password, name } = await req.json();
     const user = await Member.findOne({ email }).select("verified");
 
-    if (user && user.verified) {
-      return new Response(
-        JSON.stringify({ error: "Email already registered" }),
-        {
-          status: 400,
-        }
-      );
-    }
+    if (user && user.verified)
+      return new Response(JSON.stringify({ err: "Email already registered" }), {
+        status: 400,
+      });
 
-    if (user && !user.verified) {
+    if (user && !user.verified)
       return new Response(
         JSON.stringify({
           userId: user._id,
-          msg: "Email already registered and need to be verified",
+          err: "Email already registered and need to be verified",
         }),
         {
-          status: 200,
+          status: 403,
         }
       );
-    }
 
     const firstLetter = name[0].toUpperCase();
     const defaultImage = `https://dummyimage.com/100x100/000/fff&text=${firstLetter}`;
@@ -59,7 +54,7 @@ export const POST = async (req: NextRequest) => {
     });
   } catch (err) {
     console.log(err);
-    return new Response(JSON.stringify({ error: "Something went wrong" }), {
+    return new Response(JSON.stringify({ err }), {
       status: 500,
     });
   }

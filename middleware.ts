@@ -6,7 +6,7 @@ const authMiddleware = withAuth({
     authorized: ({ token }) => token != null,
   },
   pages: {
-    signIn: "/login",
+    signIn: "/",
   },
 });
 
@@ -15,5 +15,5 @@ export default function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/matrix", "/notes"],
+  matcher: ["/user"],
 };
