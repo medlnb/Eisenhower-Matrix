@@ -18,11 +18,8 @@ export const sendEmail = async (email: string, newCode: string) => {
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        throw error;
-      } else {
-        console.log("Email sent: " + info.response);
-      }
+      if (error) throw error.message;
+      else console.log("Email sent: " + info.response);
     });
 
     return true;

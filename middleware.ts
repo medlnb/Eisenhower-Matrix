@@ -11,9 +11,10 @@ const authMiddleware = withAuth({
 });
 
 export default function middleware(req: NextRequest) {
+  console.log(req.url);
   return (authMiddleware as any)(req);
 }
 
 export const config = {
-  matcher: ["/", "/matrix", "/notes"],
+  matcher: ["/", "/matrix", "/notes", "/user"],
 };

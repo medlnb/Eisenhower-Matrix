@@ -1,7 +1,7 @@
 "use client";
 import { FaGoogle } from "react-icons/fa";
 import { useFormik } from "formik";
-import { LoginSchema } from "@Schemas/UerSchema";
+import { SignupSchema } from "@Schemas/UerSchema";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,7 +32,7 @@ function Signup() {
       password: "",
       name: "",
     },
-    validationSchema: LoginSchema,
+    validationSchema: SignupSchema,
     onSubmit: async (values) => {
       setSubmitting(true);
       const res = await fetch("/api/auth/register", {
@@ -40,15 +40,13 @@ function Signup() {
         body: JSON.stringify(values),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setSubmitting(false);
-        setErrors({ email: data.error });
+
+      setErrors({ ...data });
+      setSubmitting(false);
+      if (res.ok) {
+        setValidation((prev) => ({ ...prev, userId: data.userId }));
         return;
       }
-      setSubmitting(false);
-      setValidation((prev) => ({ ...prev, userId: data.userId }));
-      if (data.msg) setErrors({ email: data.msg });
-      return;
     },
   });
 
@@ -106,15 +104,21 @@ function Signup() {
   };
 
   return (
-    <main className="md:w-[20rem] w-full">
-      <form onSubmit={handleSubmit}>
-        <h2 className="text-lg font-bold">_Sign up</h2>
-        <h3 className="text-gray-400 text-sm font-semibold ">
+    <main className="md:w-[25rem] w-full p-6 bg-primary-1 rounded-lg">
+      <form onSubmit={handleSubmit} className="space-y-1">
+        <h2 className="text-xl font-bold">Sign up</h2>
+        <h3 className="text-gray-400 text-sm font-semibold">
           Please enter your details
         </h3>
-        <h4 className="pl-1 text-xs mt-4 text-gray-300">Say your name</h4>
+
+        <label className="block text-sm text-gray-300">Name</label>
         <input
-          className="p-2 border border-[#979aa8] rounded-md text-black w-full focus:outline-none"
+          className={`p-3 border border-[#979aa8] rounded-md text-black w-full
+            ${
+              touched.name && errors.name
+                ? "outline outline-2 outline-red-500"
+                : "focus:outline-none"
+            }`}
           id="name"
           {...getFieldProps("name")}
         />
@@ -125,9 +129,15 @@ function Signup() {
         >
           {errors.name} !
         </p>
-        <h4 className="pl-1 text-xs text-gray-300">Email</h4>
+
+        <label className="block text-sm text-gray-300">Email</label>
         <input
-          className="p-2 border border-[#979aa8] rounded-md text-black w-full focus:outline-none"
+          className={`p-3 border border-[#979aa8] rounded-md text-black w-full  
+            ${
+              touched.email && errors.email
+                ? "outline outline-2 outline-red-500"
+                : "focus:outline-none"
+            }`}
           id="email"
           {...getFieldProps("email")}
         />
@@ -138,37 +148,52 @@ function Signup() {
         >
           {errors.email} !
         </p>
-        <h4 className="pl-1 text-xs text-gray-300">Password</h4>
+
+        <label className="block text-sm text-gray-300">Password</label>
         <input
-          className="p-2 border border-[#979aa8] rounded-md text-black w-full focus:outline-none"
+          className={`p-3 border border-[#979aa8] rounded-md text-black w-full
+            ${
+              touched.email && errors.email
+                ? "outline outline-2 outline-red-500"
+                : "focus:outline-none"
+            }`}
           type="password"
           id="password"
           {...getFieldProps("password")}
         />
         <p
-          className={`text-xs text-red-400  ${
+          className={`text-xs text-red-400 ${
             touched.password && errors.password ? "visible" : "invisible"
           }`}
         >
-          Required
-          {errors.password} !
+          Required {errors.password} !
         </p>
 
         {!validation.userId && (
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-secondary-2 p-1 flex justify-center items-center rounded-md w-full mt-2 text-sm"
+            className={`p-3 flex items-center justify-center gap-2 rounded-md w-full mt-2 text-sm font-medium transition-colors duration-200 ${
+              isSubmitting
+                ? "bg-gray-400"
+                : "bg-secondary-2 hover:bg-secondary-3"
+            }`}
           >
-            {isSubmitting ? <MoonLoader size={15} color="#fff" /> : "Sign up"}
+            {isSubmitting ? <MoonLoader size={18} color="#fff" /> : "Sign up"}
           </button>
         )}
       </form>
+
       {validation.userId && (
         <>
-          <h4 className="pl-1 text-xs mt-4 text-gray-300">Validation Code</h4>
+          <div className="w-full h-[1px] mb-4 bg-gray-600" />
+          <h4 className="block text-sm text-gray-300">Validation Code</h4>
           <input
-            className="p-1 border border-[#979aa8] rounded-md text-black w-full focus:outline-none text-center"
+            className={`p-3 border border-[#979aa8] rounded-md text-black w-full text-center ${
+              validation.errors
+                ? "outline outline-2 outline-red-500"
+                : "focus:outline-none"
+            }`}
             id="email"
             value={validation.code}
             onChange={(e) => {
@@ -190,22 +215,22 @@ function Signup() {
           <div className="flex justify-between gap-2">
             <button
               disabled={validation.isSubmitting}
-              className="p-1 flex justify-center rounded-md w-full mt-2 text-sm bg-secondary-2"
+              className="p-3 flex justify-center rounded-md w-full mt-2 text-sm font-medium bg-secondary-2"
               onClick={HandleValid}
             >
               {validation.isSubmitting ? (
-                <MoonLoader size={15} color="#fff" />
+                <MoonLoader size={18} color="#fff" />
               ) : (
                 "Valid"
               )}
             </button>
             <button
               disabled={validation.isSubmittingResend}
-              className="p-1 flex justify-center rounded-md w-full mt-2 text-sm bg-gray-400"
+              className="p-3 flex justify-center rounded-md w-full mt-2 text-sm font-medium bg-gray-400"
               onClick={HandleResetCode}
             >
               {validation.isSubmittingResend ? (
-                <MoonLoader size={15} color="#000" />
+                <MoonLoader size={18} color="#000" />
               ) : (
                 "Resend"
               )}
@@ -214,21 +239,22 @@ function Signup() {
         </>
       )}
 
-      <div className="relative flex justify-center">
-        <p className="bg-primary-1 px-1 absolute top-1/2 -translate-y-1/2 pb-1">
+      <div className="relative flex justify-center mt-4">
+        <p className="bg-primary-1 px-2 absolute top-1/2 -translate-y-1/2">
           or
         </p>
         <div className="w-full bg-gray-400 h-0.5 my-4" />
       </div>
+
       <button
-        className="p-1 rounded-md w-full bg-gray-500 flex items-center justify-center gap-2 text-sm"
+        className="p-3 rounded-md w-full bg-gray-600 hover:bg-gray-800 flex items-center justify-center gap-2 text-sm font-medium transition-colors duration-200"
         onClick={() => signIn("google", { callbackUrl: "/" })}
       >
-        <FaGoogle />
-        Sign up with google
+        <FaGoogle /> Sign up with Google
       </button>
-      <div className="text-sm text-gray-300">
-        already have an account?!{" "}
+
+      <div className="text-sm text-gray-300 mt-4 text-center">
+        {"Already have an account? "}
         <Link href="/login" className="text-white font-semibold underline">
           Log in
         </Link>

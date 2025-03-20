@@ -8,29 +8,27 @@ import { sendEmail } from "@utils/sendEmail";
 export const POST = async (req: NextRequest) => {
   try {
     await connectToDatabase();
-    const { email, password, name } = await req.json();
+    const { name, email, password } = await req.json();
     const user = await Member.findOne({ email }).select("verified");
 
-    if (user && user.verified) {
+    if (user && user.verified)
       return new Response(
-        JSON.stringify({ error: "Email already registered" }),
+        JSON.stringify({ email: "Email already registered" }),
         {
-          status: 400,
+          status: 409,
         }
       );
-    }
 
-    if (user && !user.verified) {
+    if (user && !user.verified)
       return new Response(
         JSON.stringify({
           userId: user._id,
-          msg: "Email already registered and need to be verified",
+          email: "Email already registered and need to be verified",
         }),
         {
           status: 200,
         }
       );
-    }
 
     const firstLetter = name[0].toUpperCase();
     const defaultImage = `https://dummyimage.com/100x100/000/fff&text=${firstLetter}`;
@@ -52,6 +50,7 @@ export const POST = async (req: NextRequest) => {
       code: newCode,
       triesLeft: 3,
     });
+
     await sendEmail(email, newCode);
 
     return new Response(JSON.stringify({ userId: newUser._id }), {
@@ -59,7 +58,7 @@ export const POST = async (req: NextRequest) => {
     });
   } catch (err) {
     console.log(err);
-    return new Response(JSON.stringify({ error: "Something went wrong" }), {
+    return new Response(JSON.stringify({ email: "Something went wrong" }), {
       status: 500,
     });
   }

@@ -10,17 +10,15 @@ export const POST = async (req: NextRequest) => {
     const { userId, code } = await req.json();
     const validationCode = await EmailCode.findOne({ userId });
 
-    if (!validationCode) {
+    if (!validationCode)
       return new Response(JSON.stringify({ error: "Invalid user" }), {
         status: 400,
       });
-    }
 
-    if (validationCode.triesLeft === 0) {
+    if (validationCode.triesLeft === 0)
       return new Response(JSON.stringify({ error: "No tries left" }), {
         status: 400,
       });
-    }
 
     if (validationCode.code !== code) {
       validationCode.triesLeft -= 1;
