@@ -1,7 +1,5 @@
 import { cookies } from "next/headers";
-import Table from "./Table";
-import { getServerSession } from "next-auth";
-import { options } from "@app/api/auth/[...nextauth]/options";
+import Table from "./Table"
 
 async function Page() {
   const res = await fetch(`${process.env.URL}/api/matrixtask`, {
