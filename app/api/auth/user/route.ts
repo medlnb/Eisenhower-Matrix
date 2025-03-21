@@ -3,14 +3,13 @@ import { connectToDatabase } from "@utils/database";
 import { NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { options } from "../[...nextauth]/options";
+import { compareSync, hashSync } from "bcryptjs";
 
 export const GET = async () => {
   try {
     await connectToDatabase();
     const session = await getServerSession(options);
-    const user = await Member.findById(session?.user._id).select(
-      "name phoneNumber address image"
-    );
+    const user = await Member.findById(session?.user._id).select("name image");
 
     if (!user)
       return new Response(JSON.stringify({ err: "No User found" }), {
@@ -33,18 +32,28 @@ export const PATCH = async (req: NextRequest) => {
     await connectToDatabase();
     const session = await getServerSession(options);
     const user = await Member.findById(session?.user._id).select(
-      "name phoneNumber address"
+      "name image password"
     );
     if (!user || !session)
       return new Response(JSON.stringify({ err: "No User found" }), {
         status: 401,
       });
 
-    const { name, phoneNumber, address, image } = await req.json();
+    const { name, image, newPassword, password } = await req.json();
     if (name) user.name = name;
-    if (phoneNumber) user.phoneNumber = phoneNumber;
-    if (address) user.address = address;
     if (image) user.image = image;
+    if (newPassword) {
+      const isMatch = compareSync(password, user.password ?? "");
+      if (user.password && !isMatch)
+        return new Response(
+          JSON.stringify({ password: "Incorrect password" }),
+          {
+            status: 403,
+          }
+        );
+      const hashedPassword = hashSync(newPassword, 10);
+      user.password = hashedPassword;
+    }
 
     await user.save();
 
