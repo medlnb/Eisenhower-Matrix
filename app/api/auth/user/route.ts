@@ -31,6 +31,16 @@ export const PATCH = async (req: NextRequest) => {
   try {
     await connectToDatabase();
     const session = await getServerSession(options);
+
+    // Prevent updating the guest user
+    if (session?.user?._id === "67db3226a8fcdd7efa768373")
+      return new Response(
+        JSON.stringify({ err: "You can't update the guest user" }),
+        {
+          status: 403,
+        }
+      );
+
     const user = await Member.findById(session?.user._id).select(
       "name image password"
     );

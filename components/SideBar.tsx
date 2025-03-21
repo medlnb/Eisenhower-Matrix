@@ -64,10 +64,12 @@ function SideBar() {
 
       if (!res.ok) {
         const error = await res.json();
-        setErrors(error);
+        if (error.err) return toast.error(error.err);
+        else setErrors(error);
         setSubmitting(false);
         return;
       }
+
       setValues({
         isLoaded: false,
         image: "",
@@ -105,6 +107,9 @@ function SideBar() {
   const HandleChangeImage = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    // Prevent updating the guest user
+    if (session?.user?._id === "67db3226a8fcdd7efa768373")
+      return toast.error("You can't update the guest user");
     setLoadingSubmitImage(true);
     const file = event.target.files?.[0];
     if (!file) {
@@ -117,6 +122,12 @@ function SideBar() {
       method: "POST",
       body: JSON.stringify({ image: UploadedImage }),
     });
+    if (!res.ok) {
+      const { err } = await res.json();
+      toast.error(err);
+      setLoadingSubmitImage(false);
+      return;
+    }
     const { imageId } = await res.json();
     await fetch("/api/auth/user", {
       method: "PATCH",
@@ -216,7 +227,7 @@ function SideBar() {
               width={100}
               alt="User Image"
               src={session?.user?.image}
-              className="h-8 w-8 rounded-full cursor-pointer hover:scale-125 duration-200"
+              className="h-8 w-8 rounded-full cursor-pointer hover:scale-125 duration-200 object-contain"
             />
           )}
         </div>
@@ -248,7 +259,7 @@ function SideBar() {
               width={100}
               alt="User Image"
               src={session?.user?.image}
-              className="h-8 w-8 rounded-full"
+              className="h-8 w-8 rounded-full object-contain"
             />
           )}
         </div>
