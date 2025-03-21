@@ -68,14 +68,14 @@ function SideBar() {
         setSubmitting(false);
         return;
       }
-      setValues((prev) => ({
+      setValues({
         isLoaded: false,
         image: "",
         name: "",
         defaultName: "",
         newPassword: "",
         password: "",
-      }));
+      });
 
       update({
         name: values?.name,
