@@ -163,7 +163,6 @@ function SideBar() {
       newPassword: "",
     }));
     setDialog(false);
-    toast.success("User information updated successfully");
   };
 
   return (
@@ -401,8 +400,19 @@ function SideBar() {
             >
               Save
             </Button>
+
             <Button variant="outlined" color="neutral" onClick={closeDialog}>
               Cancel
+            </Button>
+            <Button
+              sx={{ display: { xs: "block", sm: "none" } }}
+              variant="solid"
+              color="neutral"
+              onClick={() => {
+                signOut();
+              }}
+            >
+              Log out
             </Button>
           </Box>
         </ModalDialog>
