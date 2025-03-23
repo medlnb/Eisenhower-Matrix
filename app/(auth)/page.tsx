@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import Table from "./Table"
+import Table from "./Table";
 
 async function Page() {
   const res = await fetch(`${process.env.URL}/api/matrixtask`, {
