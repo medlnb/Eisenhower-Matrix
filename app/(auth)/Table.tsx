@@ -2,7 +2,7 @@
 import DroppableContainer from "@components/DroppableContainer";
 import DroppableTrash from "@components/DroppableTrash";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -12,6 +12,7 @@ import { LuSave } from "react-icons/lu";
 import { Button } from "@mui/joy";
 import { IoMdAdd } from "react-icons/io";
 import { FiCheckSquare } from "react-icons/fi";
+import { useRef } from "react";
 
 interface ContainerType {
   container:
@@ -37,6 +38,7 @@ interface MatrixTask {
 }
 
 function Table({ tasks }: { tasks: MatrixTask[] }) {
+  const titleRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [Toggle, setToggle] = useState(false);
   const [draggables, setDraggables] = useState<MatrixTask[]>(tasks);
@@ -54,6 +56,27 @@ function Table({ tasks }: { tasks: MatrixTask[] }) {
       to: string;
     }[]
   >([]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        setNewMatrixTask({
+          container: "ImportUrgant",
+          title: "",
+          content: "",
+          loading: false,
+        });
+        setToggle(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const handleDragEnd = async (event: DragEndEvent) => {
     setToggle(false);
@@ -113,7 +136,7 @@ function Table({ tasks }: { tasks: MatrixTask[] }) {
       prev.filter((draggable) => {
         if (draggable._id === id) removedTask = draggable;
         return draggable._id !== id;
-      })
+      }),
     );
     const res = await fetch("/api/matrixtask", {
       method: "DELETE",
@@ -141,6 +164,10 @@ function Table({ tasks }: { tasks: MatrixTask[] }) {
       setTracker([]);
     }
     return setLoading((prev) => !prev);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.ctrlKey && e.key === "Enter") HandleAdd();
   };
 
   return (
@@ -203,7 +230,7 @@ function Table({ tasks }: { tasks: MatrixTask[] }) {
             <DroppableContainer
               key={container}
               tasks={draggables.filter(
-                (draggable) => draggable.container === container
+                (draggable) => draggable.container === container,
               )}
               id={container}
             />
@@ -229,16 +256,23 @@ function Table({ tasks }: { tasks: MatrixTask[] }) {
             open={!!newMatrixTask}
             onClose={() => setNewMatrixTask(null)}
             aria-labelledby="alert-dialog-title"
+            TransitionProps={{
+              onEntered: () => {
+                titleRef.current?.focus();
+              },
+            }}
           >
             <DialogTitle id="alert-dialog-title">
               Add New Matrix Task
             </DialogTitle>
             <DialogContent>
               <input
+                ref={titleRef}
                 type="text"
                 placeholder="Title"
                 className="w-full p-2 border border-[#282a35] rounded-md"
                 value={newMatrixTask?.title}
+                onKeyDown={handleKeyDown}
                 onChange={(e) =>
                   setNewMatrixTask((prev) => ({
                     ...prev!,
@@ -250,6 +284,7 @@ function Table({ tasks }: { tasks: MatrixTask[] }) {
                 placeholder="Content"
                 className="w-full p-2 border border-[#282a35] rounded-md mt-2"
                 value={newMatrixTask?.content}
+                onKeyDown={handleKeyDown}
                 onChange={(e) =>
                   setNewMatrixTask((prev) => ({
                     ...prev!,

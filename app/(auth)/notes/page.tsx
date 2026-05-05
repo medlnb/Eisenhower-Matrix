@@ -11,6 +11,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { MoonLoader } from "react-spinners";
 import { Button } from "@mui/joy";
 import EmptyState from "@components/EmptyState";
+import { useRef } from "react";
 
 interface NoteType {
   _id: string;
@@ -19,6 +20,7 @@ interface NoteType {
 }
 
 function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
+  const titleRef = useRef<HTMLInputElement>(null);
   const [dialog, setDialog] = useState(false);
   const [newNote, setNewNote] = useState<{
     _id?: string;
@@ -27,6 +29,27 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
     loading?: boolean;
   } | null>();
   const { replace } = useRouter();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        setNewNote({
+          title: "",
+          content: "",
+          loading: false,
+        });
+        setDialog(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const [notes, setNotes] = useState<{
     data: NoteType[];
     count: number;
@@ -85,7 +108,7 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
               content: newNote?.content,
               _id: newNote?._id,
             }
-          : note
+          : note,
       ),
     }));
     setDialog(false);
@@ -106,7 +129,11 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
     return true;
   };
 
-  const HandleOpenEdit = (_id: string, title: string, content: string) => {
+  const HandleOpenEdit = async (
+    _id: string,
+    title: string,
+    content: string,
+  ) => {
     setNewNote({
       _id,
       title,
@@ -114,6 +141,13 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
       loading: false,
     });
     setDialog(true);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.ctrlKey && e.key === "Enter") {
+      if (!newNote?.title || newNote?.loading) return;
+      newNote?._id ? HandleEdit() : HandleAdd();
+    }
   };
 
   return (
@@ -200,17 +234,24 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
             backgroundColor: "#171731",
           },
         }}
+        TransitionProps={{
+          onEntered: () => {
+            titleRef.current?.focus();
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">
           <b className="text-white">{newNote?._id ? "Edit" : "Add New"} Note</b>
         </DialogTitle>
         <DialogContent>
           <input
+            ref={titleRef}
             type="text"
             placeholder="Title"
             className="w-full p-2 border border-[#282a35] rounded-md"
             value={newNote?.title}
             disabled={newNote?.loading}
+            onKeyDown={handleKeyDown}
             onChange={(e) =>
               setNewNote((prev) => ({
                 ...prev!,
@@ -223,6 +264,7 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
             className="w-full p-2 border border-[#282a35] rounded-md mt-2"
             value={newNote?.content}
             disabled={newNote?.loading}
+            onKeyDown={handleKeyDown}
             onChange={(e) =>
               setNewNote((prev) => ({
                 ...prev!,

@@ -89,7 +89,7 @@ function SideBar() {
   });
 
   const convertToBase64 = (
-    file: File
+    file: File,
   ): Promise<string | ArrayBuffer | null> => {
     if (!file) return Promise.reject("No image provided");
     return new Promise((resolve, reject) => {
@@ -105,7 +105,7 @@ function SideBar() {
   };
 
   const HandleChangeImage = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     // Prevent updating the guest user
     if (session?.user?._id === "67db3226a8fcdd7efa768373")
@@ -269,6 +269,8 @@ function SideBar() {
           aria-labelledby="nested-modal-title"
           aria-describedby="nested-modal-description"
           sx={(theme) => ({
+            backgroundColor: "#161b31",
+            borderColor: "#161b31",
             [theme.breakpoints.only("xs")]: {
               top: "unset",
               bottom: 0,
@@ -322,7 +324,7 @@ function SideBar() {
                   id="name"
                   placeholder="Name..."
                   {...getFieldProps("name")}
-                  className={`rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20
+                  className={`bg-[#161b31] rounded-md border border-gray-3 placeholder:text-dark-5 w-full py-2.5 px-5 duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20
                     ${
                       touched.name && errors.name
                         ? "outline outline-2 outline-red-500"
@@ -342,7 +344,7 @@ function SideBar() {
                   id="password"
                   placeholder="Password..."
                   {...getFieldProps("password")}
-                  className={`rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20
+                  className={`rounded-md border border-gray-3 bg-[#161b31] placeholder:text-dark-5 w-full py-2.5 px-5 duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20
                     ${
                       touched.password && errors.password
                         ? "outline outline-2 outline-red-500"
@@ -376,7 +378,7 @@ function SideBar() {
                       newPassword: e.target.value,
                     }))
                   }
-                  className={`rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20
+                  className={`rounded-md border border-gray-3 bg-[#161b31] placeholder:text-dark-5 w-full py-2.5 px-5 duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20
                     ${
                       errors.newPassword
                         ? "outline outline-2 outline-red-500"
@@ -396,7 +398,12 @@ function SideBar() {
           >
             <Button
               variant="solid"
-              sx={{ backgroundColor: "#fcb37b", color: "white" }}
+              sx={{
+                backgroundColor: "#fcb37b",
+                "&.Mui-disabled": {
+                  backgroundColor: "#60a5fa", // blue-400
+                },
+              }}
               onClick={() => handleSubmit()}
               loading={isSubmitting}
               disabled={
@@ -416,7 +423,10 @@ function SideBar() {
               Cancel
             </Button>
             <Button
-              sx={{ display: { xs: "block", sm: "none" } }}
+              sx={{
+                backgroundColor: "#ff0000",
+                display: { xs: "block", sm: "none" },
+              }}
               variant="solid"
               color="neutral"
               onClick={() => {

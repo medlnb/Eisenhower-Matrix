@@ -7,9 +7,11 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { MoonLoader } from "react-spinners";
 import { FaUser } from "react-icons/fa";
+import { useState } from "react";
 
 function Login() {
   const { replace } = useRouter();
+  const [loadingGuest, setLoadingGuest] = useState(false);
   const {
     errors,
     getFieldProps,
@@ -110,15 +112,18 @@ function Login() {
       <button
         className="mb-2 p-3 rounded-md w-full bg-gray-600 hover:bg-gray-800 flex items-center justify-center gap-2 text-sm font-medium transition-colors duration-200"
         onClick={async () => {
+          setLoadingGuest(true);
           const result = await signIn("credentials", {
             redirect: false,
             email: "guest@gmail.com",
             password: "guestPassword",
           });
+          setLoadingGuest(false);
           if (!result?.error) replace("/");
         }}
       >
-        <FaUser /> Guest
+        {loadingGuest ? <MoonLoader size={15} color="#fff" /> : <FaUser />}{" "}
+        Guest
       </button>
       <button
         className="p-3 rounded-md w-full bg-gray-600 hover:bg-gray-800 flex items-center justify-center gap-2 text-sm font-medium transition-colors duration-200"

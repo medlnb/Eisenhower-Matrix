@@ -16,6 +16,7 @@ import { Pagination } from "swiper/modules";
 import "swiper/css/pagination";
 import "swiper/css";
 import { toast } from "sonner";
+import { useRef } from "react";
 
 interface TaskType {
   _id: string;
@@ -24,6 +25,7 @@ interface TaskType {
 }
 
 function Page() {
+  const titleRef = useRef<HTMLInputElement>(null);
   const [folders, setFolders] = useState<{
     data: {
       title: string;
@@ -63,6 +65,25 @@ function Page() {
     count: 1,
     loading: true,
   });
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        HandleOpenAdd({ isDaily: true });
+      }
+      if (e.ctrlKey && e.key.toLowerCase() === "v") {
+        e.preventDefault();
+        HandleOpenAdd({ isDaily: false });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -183,7 +204,7 @@ function Page() {
             return {
               title: fld.title,
               tasks: fld.tasks.map((task) =>
-                task._id === _id ? { ...task, checked: isChecked } : task
+                task._id === _id ? { ...task, checked: isChecked } : task,
               ),
             };
           return fld;
@@ -196,13 +217,13 @@ function Page() {
       data: {
         daily: isDaily
           ? prev.data.daily.map((task) =>
-              task._id === _id ? { ...task, checked: isChecked } : task
+              task._id === _id ? { ...task, checked: isChecked } : task,
             )
           : prev.data.daily,
         all: isDaily
           ? prev.data.all
           : prev.data.all.map((task) =>
-              task._id === _id ? { ...task, checked: isChecked } : task
+              task._id === _id ? { ...task, checked: isChecked } : task,
             ),
       },
       count: prev.count,
@@ -290,6 +311,10 @@ function Page() {
       ...prev,
       count: prev.count - deletedCount,
     }));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") HandleAdd();
   };
 
   return (
@@ -419,6 +444,11 @@ function Page() {
         open={dialog}
         onClose={() => setDialog(false)}
         aria-labelledby="alert-dialog-title"
+        TransitionProps={{
+          onEntered: () => {
+            titleRef.current?.focus();
+          },
+        }}
         sx={{
           "& .MuiDialog-paper": {
             borderRadius: "10px",
@@ -431,17 +461,19 @@ function Page() {
             {newTask?.folder
               ? "Add Task to " + newTask?.folder
               : newTask?.isDaily
-              ? "Add Daily Task"
-              : "Add New Task"}
+                ? "Add Daily Task"
+                : "Add New Task"}
           </b>
         </DialogTitle>
         <DialogContent>
           <input
+            ref={titleRef}
             type="text"
             placeholder="Title"
             className="w-full p-2 border border-[#282a35] rounded-md"
             value={newTask?.title}
             disabled={newTask?.loading}
+            onKeyDown={handleKeyDown}
             onChange={(e) =>
               setNewTask((prev) => ({
                 ...prev!,
