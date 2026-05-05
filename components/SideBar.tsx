@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-import favicon from "@public/favicon.png";
+import logoNoText from "@public/logoNoText.png";
 import { FaNoteSticky, FaTable } from "react-icons/fa6";
 import { FiCheckSquare } from "react-icons/fi";
 import Link from "next/link";
@@ -181,7 +181,7 @@ function SideBar() {
       <aside className="bg-primary-1 fixed left-0 h-svh md:flex hidden flex-col justify-between py-4 duration-300 w-24">
         <div>
           <Image
-            src={favicon.src}
+            src={logoNoText.src}
             alt="logo"
             height={300}
             width={300}
