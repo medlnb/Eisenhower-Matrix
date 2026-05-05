@@ -152,7 +152,7 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 my-3 text-white">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3 my-3 text-white">
         <div
           className="flex bg-primary-2 py-2 px-2 md:px-4 rounded-xl gap-3 hover:scale-105 duration-200 cursor-pointer shadow-black shadow-md"
           onClick={() => {
@@ -170,10 +170,13 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
             fill="black"
           />
 
-          <div>
-            <div className="flex items-center gap-1 ">
+          <div className="flex-1">
+            <div className="flex items-center gap-1">
               <IoMdAdd className="text-gray-400 border rounded-md" />
               <p className="text-gray-400 text-xs">New Note</p>
+              <p className="text-xs text-gray-500 border border-gray-500 ml-auto px-1 rounded-md">
+                CTRL + B
+              </p>
             </div>
             <h2 className="font-semibold text-sm">Take a Note</h2>
           </div>
@@ -241,7 +244,14 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
         }}
       >
         <DialogTitle id="alert-dialog-title">
-          <b className="text-white">{newNote?._id ? "Edit" : "Add New"} Note</b>
+          <div className="flex justify-between items-center">
+            <b className="text-white">
+              {newNote?._id ? "Edit" : "Add New"} Note
+            </b>
+            <p className="text-xs text-gray-500 border border-gray-500 ml-2 px-1 rounded-md">
+              CTRL + ENTER
+            </p>
+          </div>
         </DialogTitle>
         <DialogContent>
           <input

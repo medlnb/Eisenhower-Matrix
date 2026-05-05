@@ -68,11 +68,11 @@ function Page() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key.toLowerCase() === "b") {
+      if (e.ctrlKey && e.key.toLowerCase() === "v") {
         e.preventDefault();
         HandleOpenAdd({ isDaily: true });
       }
-      if (e.ctrlKey && e.key.toLowerCase() === "v") {
+      if (e.ctrlKey && e.key.toLowerCase() === "b") {
         e.preventDefault();
         HandleOpenAdd({ isDaily: false });
       }
@@ -329,10 +329,13 @@ function Page() {
             className="p-2 bg-secondary-2 rounded-full"
           />
 
-          <div>
+          <div className="flex-1">
             <div className="flex items-center gap-1 ">
               <IoMdAdd className="text-gray-400 border rounded-md" />
               <p className="text-gray-400 text-xs">New Task</p>
+              <p className="hidden md:block text-xs text-gray-500 border border-gray-500 ml-auto px-1 rounded-md">
+                CTRL + B
+              </p>
             </div>
             <h2 className="font-semibold text-sm whitespace-nowrap">
               Create a Task
@@ -346,10 +349,13 @@ function Page() {
         >
           <LuTimerReset size={40} className="p-2 bg-secondary-2 rounded-full" />
 
-          <div>
+          <div className="flex-1">
             <div className="flex items-center gap-1 ">
               <IoMdAdd className="text-gray-400 border rounded-md" />
               <p className="text-gray-400 text-xs">New daily Task</p>
+              <p className="hidden md:block text-xs text-gray-500 border border-gray-500 ml-auto px-1 rounded-md">
+                CTRL + V
+              </p>
             </div>
             <h2 className="font-semibold text-sm whitespace-nowrap">
               Create a Task
@@ -457,13 +463,18 @@ function Page() {
         }}
       >
         <DialogTitle id="alert-dialog-title">
-          <b className="text-white">
-            {newTask?.folder
-              ? "Add Task to " + newTask?.folder
-              : newTask?.isDaily
-                ? "Add Daily Task"
-                : "Add New Task"}
-          </b>
+          <div className="flex justify-between items-center">
+            <b className="text-white">
+              {newTask?.folder
+                ? "Add Task to " + newTask?.folder
+                : newTask?.isDaily
+                  ? "Add Daily Task"
+                  : "Add New Task"}
+            </b>
+            <p className="text-xs text-gray-500 border border-gray-500 ml-2 px-1 rounded-md">
+              CTRL + ENTER
+            </p>
+          </div>
         </DialogTitle>
         <DialogContent>
           <input
