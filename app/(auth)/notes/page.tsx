@@ -146,7 +146,11 @@ function Page({ searchParams: { p } }: { searchParams: { p?: string } }) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.ctrlKey && e.key === "Enter") {
       if (!newNote?.title || newNote?.loading) return;
-      newNote?._id ? HandleEdit() : HandleAdd();
+      if (newNote._id) {
+        HandleEdit();
+      } else {
+        HandleAdd();
+      }
     }
   };
 
